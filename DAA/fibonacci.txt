@@ -1,0 +1,103 @@
+------------------------------------------------------------
+DAA PRACTICAL 1
+------------------------------------------------------------
+Title:
+Write a program (non-recursive and recursive) to calculate
+Fibonacci numbers and analyze their time and space complexity.
+
+------------------------------------------------------------
+CODE:
+------------------------------------------------------------
+def fibonacci_iter(n):
+    if n < 0:
+        return -1, 1
+    if n == 0 or n == 1:
+        return n, 1
+    steps = 0
+    a = 0
+    b = 1
+    for i in range(2, n+1):
+        c = a + b
+        a = b
+        b = c
+        steps += 1
+    return c, steps+1
+
+
+def fibonacci_recur(n):
+    if n < 0:
+        return -1, 1
+    if n == 0 or n == 1:
+        return n, 1
+    fib1, steps1 = fibonacci_recur(n-1)
+    fib2, steps2 = fibonacci_recur(n-2)
+    return fib1 + fib2, steps1 + steps2 + 1
+
+
+if __name__ == '__main__':
+    n = int(input("Enter a number: "))
+    print("Iterative:", fibonacci_iter(n)[0])
+    print("Steps:", fibonacci_iter(n)[1])
+    print("Recursive:", fibonacci_recur(n)[0])
+    print("Steps:", fibonacci_recur(n)[1])
+
+------------------------------------------------------------
+SAMPLE OUTPUT:
+------------------------------------------------------------
+Enter a number: 5
+Iterative: 5
+Steps: 5
+Recursive: 5
+Steps: 15
+
+------------------------------------------------------------
+ANALYSIS:
+------------------------------------------------------------
+Iterative (Non-Recursive):
+- Approach: Uses a simple for loop
+- Time Complexity: O(n)
+- Space Complexity: O(1)
+- Fast and memory efficient
+
+Recursive:
+- Approach: Calls itself twice for each term
+- Time Complexity: O(2^n)
+- Space Complexity: O(n) (stack frames)
+- Slow for large n due to repeated calculations
+
+------------------------------------------------------------
+OBSERVATION TABLE:
+------------------------------------------------------------
+| n  | Iterative Value | Iterative Steps | Recursive Steps |
+|----|------------------|-----------------|-----------------|
+| 5  | 5                | 5               | 15              |
+| 10 | 55               | 10              | 177             |
+| 15 | 610              | 15              | 1973            |
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+The iterative Fibonacci method is much faster and uses less
+memory compared to the recursive method. The recursive version
+grows exponentially in time as it recomputes the same subproblems.
+Hence, iterative approach is preferred for efficiency.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is Fibonacci Series?
+→ A sequence where each term is the sum of the two previous ones.
+
+Q2. Difference between recursive and non-recursive Fibonacci?
+→ Recursive uses function calls, iterative uses loops.
+
+Q3. Time & space complexity of recursive Fibonacci?
+→ Time: O(2^n), Space: O(n)
+
+Q4. Time & space complexity of iterative Fibonacci?
+→ Time: O(n), Space: O(1)
+
+Q5. Which one is better and why?
+→ Iterative, because it’s faster and more memory efficient.
+
+------------------------------------------------------------

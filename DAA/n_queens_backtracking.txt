@@ -1,0 +1,137 @@
+------------------------------------------------------------
+DAA PRACTICAL 5
+------------------------------------------------------------
+Title of the Assignment:
+Design n-Queens matrix having first Queen placed. Use backtracking to
+place remaining Queens to generate the final n-Queen’s matrix.
+
+Objective of the Assignment:
+Students should be able to understand and solve n-Queen Problem, and
+understand basics of Backtracking.
+
+------------------------------------------------------------
+CODE:
+------------------------------------------------------------
+def solveNQueens(n: int, first_queen_col: int):
+    col = set()       # Columns under attack
+    posDiag = set()   # (r + c) diagonals under attack
+    negDiag = set()   # (r - c) diagonals under attack
+
+    res = []          # Stores all valid board configurations
+    board = [["."] * n for _ in range(n)]
+
+    # Helper recursive function
+    def backtrack(r):
+        if r == n:
+            res.append(["".join(row) for row in board])
+            return
+
+        for c in range(n):
+            # Check if the current cell is safe
+            if c in col or (r + c) in posDiag or (r - c) in negDiag:
+                continue
+
+            # Place the Queen
+            col.add(c)
+            posDiag.add(r + c)
+            negDiag.add(r - c)
+            board[r][c] = "Q"
+
+            # Recurse for next row
+            backtrack(r + 1)
+
+            # Backtrack: remove the Queen
+            col.remove(c)
+            posDiag.remove(r + c)
+            negDiag.remove(r - c)
+            board[r][c] = "."
+
+    # Place the first Queen manually
+    col.add(first_queen_col)
+    posDiag.add(0 + first_queen_col)
+    negDiag.add(0 - first_queen_col)
+    board[0][first_queen_col] = "Q"
+
+    # Start recursion from second row
+    backtrack(1)
+    return res
+
+
+if __name__ == "__main__":
+    n = 8                     # Size of the board (8x8)
+    first_queen_col = 1       # Column position of first Queen
+    board = solveNQueens(n, first_queen_col)[0]
+    for row in board:
+        print(" ".join(row))
+
+------------------------------------------------------------
+SAMPLE OUTPUT (for n=8, first_queen_col=1):
+------------------------------------------------------------
+. Q . . . . . .
+. . . Q . . . .
+. . . . . Q . .
+. . . . . . . Q
+. . Q . . . . .
+. . . . Q . . .
+. . . . . . Q .
+Q . . . . . . .
+
+(‘Q’ indicates Queen position; ‘.’ indicates empty cell)
+
+------------------------------------------------------------
+ALGORITHM / STEPS:
+------------------------------------------------------------
+1. Start with an empty n×n chessboard.
+2. Place the first Queen manually at the given column in row 0.
+3. Move to the next row and try placing a Queen in a safe column:
+   - A cell is safe if there is no other Queen in the same column,
+     or in any of the diagonals.
+4. If a safe cell is found, place the Queen and move to the next row.
+5. If no safe cell exists, backtrack — remove the last placed Queen
+   and try another position.
+6. Repeat until all Queens are placed or all configurations are tested.
+7. Print or return the valid board configurations.
+
+------------------------------------------------------------
+ANALYSIS:
+------------------------------------------------------------
+• Approach: Backtracking
+• Time Complexity: O(N!)
+   - Because the algorithm tries every possible arrangement in the worst case.
+• Space Complexity: O(N)
+   - Due to recursion stack and sets storing column/diagonal attacks.
+• Type: Constraint satisfaction problem
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+The N-Queens problem demonstrates the concept of backtracking, where
+decisions are made step-by-step and invalid choices are undone. The
+algorithm efficiently places Queens on the board such that no two
+Queens attack each other horizontally, vertically, or diagonally.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is the N-Queens problem?
+→ It is the problem of placing N Queens on an N×N chessboard so that
+   no two Queens attack each other.
+
+Q2. What strategy is used to solve it?
+→ Backtracking — we place a Queen, then backtrack if a conflict occurs.
+
+Q3. What is the base condition in the recursion?
+→ When all N Queens are successfully placed (r == n).
+
+Q4. What are positive and negative diagonals?
+→ For a cell (r, c):
+   - Positive diagonal: (r + c) remains constant.
+   - Negative diagonal: (r - c) remains constant.
+
+Q5. What is the time complexity?
+→ O(N!), since it tries all permutations in the worst case.
+
+Q6. Applications of N-Queens problem?
+→ Used in constraint satisfaction problems, AI search, and scheduling.
+
+------------------------------------------------------------

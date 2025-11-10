@@ -1,0 +1,138 @@
+------------------------------------------------------------
+DAA PRACTICAL 3
+------------------------------------------------------------
+Title of the Assignment:
+Write a program to solve a fractional Knapsack problem using a greedy method.
+
+Objective of the Assignment:
+Students should be able to understand and solve fractional Knapsack
+problems using a greedy method.
+
+------------------------------------------------------------
+CODE:
+------------------------------------------------------------
+class Item:
+    def __init__(self, profit, weight):
+        self.profit = profit
+        self.weight = weight
+
+def fractionalKnapsack(w, arr):
+    # Sort items by profit/weight ratio in descending order
+    arr.sort(key=lambda x: x.profit/x.weight, reverse=True)
+    finalValue = 0.0
+
+    for item in arr:
+        if w >= item.weight:
+            finalValue += item.profit
+            w -= item.weight
+        else:
+            finalValue += item.profit * (w / item.weight)
+            break
+
+    return finalValue
+
+if __name__ == "__main__":
+    n = int(input("Enter number of items:\n"))
+    arr = []
+
+    for i in range(n):
+        profit = int(input("Enter profit of item " + str(i + 1) + ":\n"))
+        weight = int(input("Enter weight of item " + str(i + 1) + ":\n"))
+        arr.append(Item(profit, weight))
+
+    w = int(input("Enter capacity of knapsack:\n"))
+    print("Maximum value in knapsack:", fractionalKnapsack(w, arr))
+
+------------------------------------------------------------
+SAMPLE INPUT / OUTPUT:
+------------------------------------------------------------
+Enter number of items:
+3
+Enter profit of item 1:
+60
+Enter weight of item 1:
+10
+Enter profit of item 2:
+100
+Enter weight of item 2:
+20
+Enter profit of item 3:
+120
+Enter weight of item 3:
+30
+Enter capacity of knapsack:
+50
+
+Output:
+Maximum value in knapsack: 240.0
+
+------------------------------------------------------------
+ALGORITHM / STEPS:
+------------------------------------------------------------
+1. Calculate the profit/weight ratio for each item.
+2. Sort all items in descending order of their ratio.
+3. Start filling the knapsack:
+   - Take the whole item if its weight is less than remaining capacity.
+   - Take the fractional part of the next item if the capacity is almost full.
+4. Stop when the knapsack becomes full.
+5. The total profit accumulated is the maximum value possible.
+
+------------------------------------------------------------
+ANALYSIS:
+------------------------------------------------------------
+• Approach: Greedy Algorithm
+• Time Complexity: O(n log n)
+   - Sorting items by ratio dominates the time.
+• Space Complexity: O(1)
+   - Only a few variables are used.
+• Optimal Substructure:
+   - The problem can be broken into smaller subproblems that are also optimal.
+
+------------------------------------------------------------
+EXAMPLE EXPLANATION:
+------------------------------------------------------------
+Items:
+| Item | Profit | Weight | Profit/Weight |
+|------|---------|---------|---------------|
+| 1    | 60      | 10      | 6.0           |
+| 2    | 100     | 20      | 5.0           |
+| 3    | 120     | 30      | 4.0           |
+
+Sorted by ratio: Item 1 → Item 2 → Item 3
+
+Knapsack capacity = 50
+→ Take Item 1 (10kg, +60)
+→ Take Item 2 (20kg, +100)
+→ Take 2/3 of Item 3 (20kg, +80)
+
+Total profit = 60 + 100 + 80 = 240
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+Fractional Knapsack is solved efficiently using the greedy method.
+The algorithm chooses items based on the maximum profit-to-weight ratio
+and can take fractional parts of items to achieve the optimal total value.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is the Knapsack problem?
+→ It is a problem of selecting items with given weights and profits to maximize total profit within a weight limit.
+
+Q2. What is the difference between fractional and 0/1 knapsack?
+→ In fractional knapsack, we can take a fraction of an item; in 0/1 knapsack, we must take the entire item or leave it.
+
+Q3. Which strategy is used in this algorithm?
+→ Greedy strategy — selecting the item with the highest profit/weight ratio first.
+
+Q4. What is the time complexity?
+→ O(n log n), due to sorting.
+
+Q5. Why is this problem suitable for greedy method?
+→ Because taking the highest profit-to-weight ratio at each step gives an optimal solution.
+
+Q6. Applications of Knapsack problem?
+→ Resource allocation, cargo loading, investment decisions, and scheduling.
+
+------------------------------------------------------------

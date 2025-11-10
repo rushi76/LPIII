@@ -1,0 +1,134 @@
+------------------------------------------------------------
+DAA PRACTICAL 4
+------------------------------------------------------------
+Title of the Assignment:
+Write a program to solve a 0-1 Knapsack problem using dynamic programming or branch and bound strategy.
+
+Objective of the Assignment:
+Students should be able to understand and solve 0-1 Knapsack problem using dynamic programming.
+
+------------------------------------------------------------
+CODE:
+------------------------------------------------------------
+def knapsack_01(n, values, weights, W):
+    dp = [[0] * (W+1) for _ in range(n+1)]
+
+    for i in range(n+1):
+        for w in range(W+1):
+            if i == 0 or w == 0:
+                dp[i][w] = 0
+            elif weights[i-1] <= w:
+                dp[i][w] = max(dp[i-1][w], dp[i-1][w-weights[i-1]] + values[i-1])
+            else:
+                dp[i][w] = dp[i-1][w]
+    
+    # Traceback to find which items are included
+    selected_items = []
+    i, w = n, W
+    while i > 0 and w > 0:
+        if dp[i][w] != dp[i-1][w]:
+            selected_items.append(i-1)
+            w -= weights[i-1]
+        i -= 1
+    
+    return dp[n][W], selected_items
+
+if __name__ == "__main__":
+    n = 3
+    values = [60, 100, 120]
+    weights = [10, 20, 30]
+    W = 50
+
+    max_value, selected_items = knapsack_01(n, values, weights, W)
+    print("Maximum value:", max_value)
+    print("Selected items:", selected_items)
+
+------------------------------------------------------------
+SAMPLE OUTPUT:
+------------------------------------------------------------
+Maximum value: 220
+Selected items: [2, 1]
+
+------------------------------------------------------------
+ALGORITHM / STEPS:
+------------------------------------------------------------
+1. Create a 2D array dp[n+1][W+1], where dp[i][w] represents the
+   maximum value that can be obtained using first i items and
+   total weight limit w.
+2. Initialize first row and column with 0 (base case).
+3. For each item i (1 to n) and capacity w (1 to W):
+   - If weight[i-1] <= w:
+       dp[i][w] = max(dp[i-1][w],
+                      dp[i-1][w - weights[i-1]] + values[i-1])
+   - Else:
+       dp[i][w] = dp[i-1][w]
+4. The value dp[n][W] is the maximum profit.
+5. Trace back through dp table to find which items were selected.
+
+------------------------------------------------------------
+ILLUSTRATION:
+------------------------------------------------------------
+Example:
+n = 3
+values = [60, 100, 120]
+weights = [10, 20, 30]
+W = 50
+
+DP Table (partial):
+
+        Weight (W)
+        0   10   20   30   40   50
+Items
+0      [0,   0,   0,   0,   0,   0]
+1(10)  [0,  60,  60,  60,  60,  60]
+2(20)  [0,  60, 100, 160, 160, 160]
+3(30)  [0,  60, 100, 160, 180, 220]
+
+Maximum value = 220
+Items chosen = Item 2 and Item 3
+
+------------------------------------------------------------
+ANALYSIS:
+------------------------------------------------------------
+• Approach: Dynamic Programming
+• Time Complexity: O(n * W)
+   - Two nested loops for filling DP table.
+• Space Complexity: O(n * W)
+   - Due to DP matrix storage.
+• Optimal Substructure:
+   - Optimal solution includes optimal solutions to subproblems.
+• Overlapping Subproblems:
+   - The same subproblems (same weights and items) are solved repeatedly.
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+The 0/1 Knapsack problem is efficiently solved using dynamic programming.
+It ensures optimal solution by systematically building up results of
+smaller subproblems, avoiding redundant calculations.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is the difference between 0/1 and fractional knapsack?
+→ In 0/1 knapsack, items cannot be divided; each item is either taken or left.
+
+Q2. Why dynamic programming is used here?
+→ Because the problem has optimal substructure and overlapping subproblems.
+
+Q3. What is the time complexity of 0/1 knapsack using DP?
+→ O(n * W), where n = number of items, W = capacity of knapsack.
+
+Q4. What does dp[i][w] represent?
+→ The maximum profit obtainable with i items and capacity w.
+
+Q5. What is the base condition used in this program?
+→ dp[0][w] = dp[i][0] = 0 (no items or zero capacity = 0 profit)
+
+Q6. How do we trace which items were selected?
+→ By checking if dp[i][w] ≠ dp[i-1][w]; if true, item i-1 was included.
+
+Q7. Applications of 0/1 Knapsack?
+→ Resource allocation, project selection, investment planning, etc.
+
+------------------------------------------------------------
