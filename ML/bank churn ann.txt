@@ -1,0 +1,178 @@
+# ------------------------------------------------------------
+# PRACTICAL 3 : BANK CUSTOMER CHURN PREDICTION USING ANN
+# ------------------------------------------------------------
+
+# 🎯 OBJECTIVE:
+# Build an Artificial Neural Network (ANN) to predict
+# whether a bank customer will churn (leave the bank) or not.
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 1 : INSTALL REQUIRED LIBRARIES
+# ------------------------------------------------------------
+import sys
+!{sys.executable} -m pip install pandas numpy matplotlib seaborn scikit-learn tensorflow keras --quiet
+print("✅ Libraries installed successfully.")
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 2 : IMPORT LIBRARIES & LOAD DATASET
+# ------------------------------------------------------------
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+
+# Load dataset (ensure file name is 'churn.csv')
+df = pd.read_csv("churn.csv")
+print("✅ Dataset loaded successfully.")
+print("Shape:", df.shape)
+df.head()
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 3 : DATA PREPROCESSING
+# ------------------------------------------------------------
+# Drop unwanted columns if present
+for col in ['RowNumber', 'CustomerId', 'Surname']:
+    if col in df.columns:
+        df.drop(col, axis=1, inplace=True)
+
+# Encode categorical columns (like Geography, Gender)
+for col in df.select_dtypes(include=['object']).columns:
+    le = LabelEncoder()
+    df[col] = le.fit_transform(df[col])
+
+# Separate features (X) and target (y)
+X = df.drop('Exited', axis=1)
+y = df['Exited']
+
+# Scale the features
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+print("✅ Data preprocessing completed.")
+print("Feature shape:", X.shape)
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 4 : SPLIT DATA INTO TRAINING & TEST SETS
+# ------------------------------------------------------------
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+print("Training samples:", X_train.shape[0])
+print("Testing samples:", X_test.shape[0])
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 5 : BUILD ANN MODEL
+# ------------------------------------------------------------
+model = Sequential()
+
+# Input layer + first hidden layer
+model.add(Dense(16, activation='relu', input_dim=X_train.shape[1]))
+
+# Second hidden layer
+model.add(Dense(8, activation='relu'))
+
+# Output layer (binary classification → sigmoid)
+model.add(Dense(1, activation='sigmoid'))
+
+# Compile the model
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+print("✅ ANN model created and compiled successfully.")
+model.summary()
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 6 : TRAIN THE MODEL
+# ------------------------------------------------------------
+history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2, verbose=1)
+print("✅ Model training completed.")
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 7 : EVALUATE MODEL PERFORMANCE
+# ------------------------------------------------------------
+# Evaluate on test data
+y_pred_prob = model.predict(X_test)
+y_pred = (y_pred_prob > 0.5).astype(int)
+
+acc = accuracy_score(y_test, y_pred)
+cm = confusion_matrix(y_test, y_pred)
+
+print("✅ Model Evaluation Completed.")
+print("Accuracy:", round(acc, 4))
+print("Confusion Matrix:\n", cm)
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 8 : VISUALIZE TRAINING PERFORMANCE
+# ------------------------------------------------------------
+plt.figure(figsize=(8,4))
+plt.plot(history.history['accuracy'], label='Train Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Training vs Validation Accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
+
+plt.figure(figsize=(8,4))
+plt.plot(history.history['loss'], label='Train Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Training vs Validation Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# ✅ END OF PRACTICAL 3
+# ------------------------------------------------------------
+
+
+Q1. What is the objective of this practical?
+👉 To predict whether a customer will churn (leave the bank) using an Artificial Neural Network (ANN).
+
+Q2. What is churn?
+👉 Churn refers to customers who stop using a company’s services or close their accounts.
+
+Q3. What preprocessing steps did you perform?
+👉 Removed irrelevant columns, encoded categorical features, scaled numerical features, and split data into training/testing sets.
+
+Q4. Why use Label Encoding?
+👉 Because machine learning models require numeric input — encoding converts categorical text data into numeric form.
+
+Q5. Why use feature scaling?
+👉 To ensure all features contribute equally and improve ANN training convergence.
+
+Q6. What activation functions did you use?
+👉 ReLU for hidden layers and Sigmoid for the output layer (binary classification).
+
+Q7. Which loss function and optimizer did you use?
+👉 Binary Crossentropy as the loss function and Adam optimizer for efficient gradient descent.
+
+Q8. What metrics did you use to evaluate the model?
+👉 Accuracy, Confusion Matrix, and Classification Report (Precision, Recall, F1).
+
+Q9. How many hidden layers did you use and why?
+👉 Two hidden layers — enough to capture non-linear relationships while avoiding overfitting for small datasets.
+
+Q10. What is your conclusion?
+👉 The ANN model predicts churn effectively; customers with high credit score, low balance, or fewer products are less likely to churn.

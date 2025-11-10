@@ -1,0 +1,163 @@
+# ------------------------------------------------------------
+# PRACTICAL 5 : K-NEAREST NEIGHBOUR (KNN) ON DIABETES DATASET
+# ------------------------------------------------------------
+
+# 🎯 OBJECTIVE:
+# Implement the K-Nearest Neighbour (KNN) algorithm
+# on the Diabetes dataset and evaluate the model using
+# Accuracy, Precision, Recall, F1-score, and Confusion Matrix.
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 1 : INSTALL REQUIRED LIBRARIES
+# ------------------------------------------------------------
+import sys
+!{sys.executable} -m pip install pandas numpy matplotlib seaborn scikit-learn --quiet
+print("✅ All libraries installed successfully.")
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 2 : IMPORT LIBRARIES & LOAD DATASET
+# ------------------------------------------------------------
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Load dataset (ensure 'diabetes.csv' is in the same folder)
+df = pd.read_csv("diabetes.csv")
+
+print("✅ Dataset loaded successfully.")
+print("Shape:", df.shape)
+df.head()
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 3 : EXPLORE & CLEAN DATA
+# ------------------------------------------------------------
+print("Missing values:\n", df.isnull().sum())
+
+# Replace or drop zeros in columns that cannot be zero
+cols_with_zero = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
+for col in cols_with_zero:
+    df[col] = df[col].replace(0, np.nan)
+    df[col].fillna(df[col].mean(), inplace=True)
+
+print("✅ Cleaned dataset. No missing or invalid zeros remain.")
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 4 : SPLIT INTO FEATURES AND TARGET
+# ------------------------------------------------------------
+X = df.drop('Outcome', axis=1)
+y = df['Outcome']
+
+# Scale features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Split dataset (70% train, 30% test)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=42)
+print("Training set size:", X_train.shape)
+print("Testing set size :", X_test.shape)
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 5 : TRAIN KNN CLASSIFIER
+# ------------------------------------------------------------
+knn = KNeighborsClassifier(n_neighbors=7)
+knn.fit(X_train, y_train)
+
+print("✅ KNN model trained successfully.")
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 6 : PREDICT AND EVALUATE MODEL
+# ------------------------------------------------------------
+y_pred = knn.predict(X_test)
+
+acc = accuracy_score(y_test, y_pred)
+cm = confusion_matrix(y_test, y_pred)
+cr = classification_report(y_test, y_pred)
+
+print("Accuracy:", round(acc, 4))
+print("Confusion Matrix:\n", cm)
+print("Classification Report:\n", cr)
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 7 : VISUALIZE CONFUSION MATRIX
+# ------------------------------------------------------------
+plt.figure(figsize=(5,4))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+plt.title("Confusion Matrix - Diabetes Prediction (KNN)")
+plt.xlabel("Predicted Label")
+plt.ylabel("True Label")
+plt.show()
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 8 : FIND BEST VALUE OF K (OPTIONAL)
+# ------------------------------------------------------------
+error_rate = []
+for k in range(1, 21):
+    knn = KNeighborsClassifier(n_neighbors=k)
+    knn.fit(X_train, y_train)
+    pred_k = knn.predict(X_test)
+    error_rate.append(np.mean(pred_k != y_test))
+
+plt.figure(figsize=(6,4))
+plt.plot(range(1,21), error_rate, marker='o', color='red')
+plt.title('Error Rate vs K Value')
+plt.xlabel('K')
+plt.ylabel('Error Rate')
+plt.show()
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# ✅ END OF PRACTICAL 5
+# ------------------------------------------------------------
+
+
+Q1. What is the objective of this practical?
+👉 To predict whether a patient has diabetes using the K-Nearest Neighbour algorithm and evaluate performance.
+
+Q2. What dataset did you use?
+👉 The PIMA Indians Diabetes dataset containing features like Glucose, Blood Pressure, BMI, Insulin, etc.
+
+Q3. Why do we replace zero values?
+👉 Because features like Glucose or BMI cannot realistically be zero — zeros are treated as missing data and replaced with the mean.
+
+Q4. What preprocessing steps were applied?
+👉 Handled missing/zero values, normalized data using StandardScaler, and split into training/testing sets.
+
+Q5. What is KNN?
+👉 A supervised learning algorithm that classifies a sample based on the majority label of its k nearest neighbors.
+
+Q6. What hyperparameter does KNN use?
+👉 k — the number of nearest neighbors considered for classification.
+
+Q7. How did you select the best value of K?
+👉 By plotting error rate vs. K values and selecting the K with the lowest error rate.
+
+Q8. What performance metrics did you use?
+👉 Accuracy, Precision, Recall, F1-score, and Confusion Matrix.
+
+Q9. What result did you observe?
+👉 Accuracy is usually around 75–80% for K=7, depending on the dataset.
+
+Q10. What is your conclusion?
+👉 KNN effectively classifies diabetes cases, but performance depends on scaling, K value, and dataset balance.

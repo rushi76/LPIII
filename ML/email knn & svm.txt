@@ -1,0 +1,176 @@
+# ------------------------------------------------------------
+# PRACTICAL 2 : EMAIL SPAM DETECTION USING KNN & SVM
+# ------------------------------------------------------------
+
+# 🎯 OBJECTIVE:
+# Classify emails as SPAM or NOT SPAM using
+# K-Nearest Neighbour (KNN) and Support Vector Machine (SVM)
+# and compare their accuracy.
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 1 : INSTALL REQUIRED LIBRARIES
+# ------------------------------------------------------------
+import sys
+!{sys.executable} -m pip install pandas numpy matplotlib seaborn scikit-learn --quiet
+print("✅ Libraries installed successfully.")
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 2 : IMPORT LIBRARIES & LOAD DATASET
+# ------------------------------------------------------------
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn import metrics
+
+# Load dataset (make sure 'emails.csv' is in same folder)
+df = pd.read_csv("emails.csv")
+
+print("✅ Dataset loaded successfully.")
+print("Shape:", df.shape)
+df.head()
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 3 : DATA PREPROCESSING
+# ------------------------------------------------------------
+# Check missing values
+print("Missing values:\n", df.isnull().sum())
+
+# Drop rows with nulls
+df = df.dropna()
+
+# Drop unnecessary columns if present
+if 'Email No.' in df.columns:
+    df.drop('Email No.', axis=1, inplace=True)
+
+# Separate features (X) and target (y)
+X = df.drop(['Prediction'], axis=1)
+y = df['Prediction']
+
+# Feature scaling (standardization)
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+print("✅ Data cleaned and scaled.")
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 4 : SPLIT DATA INTO TRAIN AND TEST SETS
+# ------------------------------------------------------------
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+print("Training size:", X_train.shape)
+print("Testing size:", X_test.shape)
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 5 : TRAIN & TEST KNN MODEL
+# ------------------------------------------------------------
+knn = KNeighborsClassifier(n_neighbors=7)
+knn.fit(X_train, y_train)
+
+y_pred_knn = knn.predict(X_test)
+
+acc_knn = metrics.accuracy_score(y_test, y_pred_knn)
+cm_knn = metrics.confusion_matrix(y_test, y_pred_knn)
+
+print("✅ KNN Model Trained Successfully.")
+print("KNN Accuracy:", round(acc_knn,4))
+print("Confusion Matrix (KNN):\n", cm_knn)
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 6 : TRAIN & TEST SVM MODEL
+# ------------------------------------------------------------
+svm_model = SVC(kernel='linear', C=1, random_state=42)
+svm_model.fit(X_train, y_train)
+
+y_pred_svm = svm_model.predict(X_test)
+
+acc_svm = metrics.accuracy_score(y_test, y_pred_svm)
+cm_svm = metrics.confusion_matrix(y_test, y_pred_svm)
+
+print("✅ SVM Model Trained Successfully.")
+print("SVM Accuracy:", round(acc_svm,4))
+print("Confusion Matrix (SVM):\n", cm_svm)
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 7 : COMPARE MODEL PERFORMANCE
+# ------------------------------------------------------------
+models = ['KNN', 'SVM']
+accuracies = [acc_knn, acc_svm]
+
+plt.figure(figsize=(6,4))
+sns.barplot(x=models, y=accuracies, palette="coolwarm")
+plt.title("Model Comparison - Accuracy")
+plt.ylabel("Accuracy Score")
+plt.show()
+
+print("=== MODEL COMPARISON ===")
+print(f"KNN Accuracy : {acc_knn:.3f}")
+print(f"SVM Accuracy : {acc_svm:.3f}")
+
+if acc_svm > acc_knn:
+    print("✅ RESULT: SVM performs better than KNN for email spam detection.")
+else:
+    print("✅ RESULT: KNN performs better than SVM (depending on dataset).")
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 8 : CLASSIFICATION REPORTS (OPTIONAL)
+# ------------------------------------------------------------
+print("\nKNN Classification Report:\n", metrics.classification_report(y_test, y_pred_knn))
+print("\nSVM Classification Report:\n", metrics.classification_report(y_test, y_pred_svm))
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# ✅ END OF PRACTICAL 2
+# ------------------------------------------------------------
+
+
+Q1. What is the objective of this practical?
+👉 To detect whether an email is spam or not using ML classification algorithms (KNN and SVM).
+
+Q2. What dataset did you use?
+👉 A dataset of email characteristics with a binary target — 1 for spam, 0 for not spam.
+
+Q3. What preprocessing was performed?
+👉 Removed nulls, dropped unnecessary columns, and standardized features using StandardScaler.
+
+Q4. What is KNN?
+👉 K-Nearest Neighbour is a lazy learning algorithm that classifies data based on the majority class of its k nearest neighbors.
+
+Q5. What is SVM?
+👉 Support Vector Machine finds an optimal hyperplane that separates data into classes with maximum margin.
+
+Q6. What hyperparameters were used?
+👉 KNN → k = 7
+👉 SVM → kernel = 'linear', C = 1
+
+Q7. What performance metric did you use?
+👉 Accuracy and Confusion Matrix.
+
+Q8. Which model performed better and why?
+👉 SVM usually performs better on high-dimensional text data as it creates a clear decision boundary.
+
+Q9. What is the use of scaling (StandardScaler)?
+👉 KNN and SVM are distance-based; scaling ensures all features contribute equally.
+
+Q10. What’s your final conclusion?
+👉 SVM achieved higher accuracy than KNN; hence, it is better suited for spam detection.

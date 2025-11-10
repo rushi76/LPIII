@@ -1,0 +1,121 @@
+# ------------------------------------------------------------
+# PRACTICAL 4 : FIND LOCAL MINIMA USING GRADIENT DESCENT
+# ------------------------------------------------------------
+
+# 🎯 OBJECTIVE:
+# Implement Gradient Descent algorithm to find
+# the local minimum of a given function y = (x + 5)^2.
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 1 : IMPORT REQUIRED LIBRARIES
+# ------------------------------------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+print("✅ Libraries imported successfully.")
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 2 : DEFINE FUNCTION AND ITS DERIVATIVE
+# ------------------------------------------------------------
+# Function: y = (x + 5)^2
+# Derivative: dy/dx = 2(x + 5)
+
+def function(x):
+    return (x + 5)**2
+
+def derivative(x):
+    return 2 * (x + 5)
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 3 : IMPLEMENT GRADIENT DESCENT ALGORITHM
+# ------------------------------------------------------------
+# Initialize parameters
+x_current = np.random.uniform(-10, 10)   # random starting point
+learning_rate = 0.1                      # step size
+precision = 0.0001                       # stopping criteria
+max_iterations = 1000                    # safety limit
+steps = [x_current]                      # store path for visualization
+
+for i in range(max_iterations):
+    grad = derivative(x_current)
+    x_next = x_current - learning_rate * grad
+    steps.append(x_next)
+    
+    if abs(x_next - x_current) < precision:
+        break
+    x_current = x_next
+
+print("✅ Gradient Descent Completed.")
+print("Local Minima found at x =", round(x_current, 4))
+print("Minimum value of function =", round(function(x_current), 4))
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# STEP 4 : VISUALIZE FUNCTION AND DESCENT PATH
+# ------------------------------------------------------------
+x_vals = np.linspace(-10, 0, 100)
+y_vals = function(x_vals)
+
+plt.figure(figsize=(8,5))
+plt.plot(x_vals, y_vals, label='y = (x + 5)^2', color='blue')
+plt.scatter(steps, [function(x) for x in steps], color='red', label='Descent Path')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Gradient Descent to Find Local Minima')
+plt.legend()
+plt.grid(True)
+plt.show()
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# ✅ END OF PRACTICAL 4
+# ------------------------------------------------------------
+
+
+Q1. What is the objective of this practical?
+👉 To find the local minimum of a function using the Gradient Descent optimization algorithm.
+
+Q2. What function did you use?
+👉 
+𝑦
+=
+(
+𝑥
++
+5
+)
+2
+y=(x+5)
+2
+, which has a parabola shape with a single minimum at x = -5.
+
+Q3. What is Gradient Descent?
+👉 It’s an optimization algorithm used to minimize functions by iteratively moving towards the steepest descent direction.
+
+Q4. What is the derivative used for?
+👉 The derivative gives the slope of the function, which guides the direction and step size of updates.
+
+Q5. What is the update rule in Gradient Descent?
+👉 x_{\text{next}} = x_{\text{current}} - \text{learning_rate} \times \text{derivative}(x_{\text{current}})
+
+Q6. What does the learning rate control?
+👉 It controls how big a step we take during each iteration — too high may overshoot, too low may take too long.
+
+Q7. What is the stopping criterion?
+👉 When the change between iterations is less than a defined precision (e.g., 0.0001).
+
+Q8. What is the expected output?
+👉 The algorithm finds the local minimum at x = -5 and y = 0.
+
+Q9. Is this a local or global minimum?
+👉 For this convex function, the local minimum is also the global minimum.
+
+Q10. Applications of Gradient Descent?
+👉 Widely used in training Machine Learning models like Linear Regression, Logistic Regression, and Neural Networks.
